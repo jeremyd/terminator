@@ -1,9 +1,9 @@
 require 'terminator'
 
 begin
-  Terminator.terminate :seconds => 0.2 do
-    sleep 0.4
+  Terminator.terminate :seconds => 2 do
+    sleep 4
   end
-rescue Terminator.error
+rescue Terminator::Error
   puts 'timed out!'
 end
