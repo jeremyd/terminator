@@ -101,7 +101,6 @@ require 'fattr'
 # end
 # #=> RuntimeError: (eval):1:in `irb_binding': Oops... I failed...
 module Terminator
-  Version = '0.4.4'
 
   # Terminator.terminate has two ways you can call it.  You can either just specify:
   #
@@ -123,8 +122,11 @@ module Terminator
     seconds = getopt :seconds, options
 
     raise ::Terminator::Error, "Time to kill must be at least 1 second" unless seconds >= 1
-
-    trap = getopt :trap, options, lambda{ eval("raise(::Terminator::Error, 'Timeout out after #{ seconds }s')", block) }
+    
+    error_proc = proc { eval("raise(::Terminator::Error, 'Timeout out after #{ seconds }s')", block.binding) }
+    
+    trap = getopt :trap, options, error_proc
+              
 
     handler = Signal.trap(signal, &trap)
 
@@ -161,7 +163,7 @@ module Terminator
   end
 
   fattr :ruby do
-    c = ::Config::CONFIG
+    c = RbConfig::CONFIG  #::Config::CONFIG
     ruby = File::join(c['bindir'], c['ruby_install_name']) << c['EXEEXT']
     raise "ruby @ #{ ruby } not executable!?" unless test(?e, ruby)
     ruby

@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'bacon'
 
-alias :doing :lambda
+alias :doing :proc
 
 describe Terminator do
   
@@ -159,7 +159,7 @@ describe Terminator do
     end
     
     it "should be able to pass in a block for arbitrary execution" do
-      new_block = lambda { eval("raise(RuntimeError, 'Oops... I failed...')") }
+      new_block = proc { eval("raise(RuntimeError, 'Oops... I failed...')") }
       doing { Terminator.terminate(:seconds => 1, :trap => new_block) { sleep 10 } }.should.raise(RuntimeError)
     end
     

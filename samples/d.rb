@@ -1,6 +1,6 @@
 require 'terminator'
 
-trap = lambda{ puts "signaled @ #{ Time.now.to_i }" }
+trap = proc { puts "signaled @ #{ Time.now.to_i }" }
 
 Terminator.terminate :seconds => 1, :trap => trap do
   sleep 2
